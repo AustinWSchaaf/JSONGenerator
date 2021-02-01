@@ -52,6 +52,7 @@ fileprivate struct Value: Comparable, Hashable, Equatable{
 fileprivate class Tree{
     private var structs: [String:JNode] = [:]
     private var nodes: [String:Node] = [:]
+    private var result = ""
     
     public func insert(item: String, name: String){
         
@@ -73,7 +74,8 @@ fileprivate class Tree{
     public func format(names: [StructName]){
         for (i,name) in names.enumerated(){
             let tabs = repeatChar("\t", count: i)
-            print("public struct \(name.name): Decodable {")
+//            print("public struct \(name.name): Decodable {")
+            result += "public struct \(name.name): Decodable {\n"
             if let strct = structs[name.name]{
                 var freq: [Value:Int] = [:]
                 for item in strct.items{
@@ -88,14 +90,16 @@ fileprivate class Tree{
 
                 for (k,v) in sortedValues{
                     if v < max{
-                        print("\t\(k.item)?")
+//                        print("\t\(k.item)?")
+                        result += "\t\(k.item)?\n"
                     }else{
-                        print("\t\(k.item)")
+//                        print("\t\(k.item)")
+                        result += "\t\(k.item)?\n"
                     }
 
                 }
-//                print("\n")
-                print("}\n")
+//                print("}\n")
+                result += "}\n"
             }
         }
 //        for i in (0..<names.count).reversed(){
@@ -109,6 +113,14 @@ fileprivate class Tree{
             res += char
         }
         return res
+    }
+    
+    public func printResults(){
+        print(result)
+    }
+    
+    public var results: String{
+        return result
     }
 }
 
@@ -135,6 +147,7 @@ class JSONToStructGenerator{
         parseTokens(0)
 
         tree.format(names: graph)
+        
         let elapsed = CFAbsoluteTimeGetCurrent() - start
         print(elapsed)
         
@@ -153,11 +166,16 @@ class JSONToStructGenerator{
     }
     
     public func printToTerminal(){
-        tree.format(names: graph)
+        tree.printResults()
     }
     
-    public func writeToFile(path: String){
-        
+    public func writeToFile(fileName: String, location: FileManager.SearchPathDirectory){
+        let path = FileManager.default.urls(for: location, in: .userDomainMask)[0].appendingPathComponent(fileName)
+        do{
+            try tree.results.write(to: path, atomically: true, encoding: .utf8)
+        }catch let err{
+            print(err.localizedDescription)
+        }
     }
     
     private func typeOf(_ val: String)->Type{
@@ -385,8 +403,4 @@ extension JSONType: _JSONType{
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "AnyDecodable value cannot be decoded")
         }
     }
-}
-
-extension String{
-    
 }
