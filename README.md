@@ -28,9 +28,13 @@ let json = """
 """
 let s = JSONToStructGenerator(json: json)
 
+s.printToTerminal()
+s.writeToFile(fileName: "Tester.swift", location: .documentDirectory)
 ````
 
 ## Output
+
+Tester.swift
 
 ````swift
 public struct main: Decodable {
