@@ -1,10 +1,7 @@
 # JSONGenerator
 Creates Decodable structs from a json input 
 
-## still under construction and testing!
-currently reliable but there may be some edge cases where it breaks
-
-## usage
+## Usage
 
 ````swift
 let json = """
@@ -33,7 +30,7 @@ let s = JSONToStructGenerator(json: json)
 
 ````
 
-## output
+## Output
 
 ````swift
 public struct main: Decodable {
@@ -50,3 +47,6 @@ public struct results: Decodable {
 	public let amount: Double
 }
 ````
+
+## Warning
+currently reliable but there may be some edge cases where it breaks
